@@ -45,7 +45,8 @@ RUN find -L "$(swift build --package-path /build -c release --show-bin-path)/" -
 # Ensure that by default, neither the directory nor any of its contents are writable.
 RUN [ -d /build/Public ] && { mv /build/Public ./Public && chmod -R a-w ./Public; } || true
 RUN [ -d /build/Resources ] && { mv /build/Resources ./Resources && chmod -R a-w ./Resources; } || true
-RUN [ -d /build/Cert ] && { mv /build/Cert ./Cert && chmod -R a-w ./Cert; } || true
+RUN [ -d /build/Cert ] && { mv /build/Cert ./Cert; } || true
+RUN mv /build/entrypoint.sh ./entrypoint.sh && chmod -R a-w ./entrypoint.sh 
 
 # ================================
 # Run image
@@ -85,5 +86,5 @@ USER vapor:vapor
 EXPOSE 8443
 
 # Start the Vapor service when the image is run, default to listening on 8080 in production environment
-ENTRYPOINT ["./App"]
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
